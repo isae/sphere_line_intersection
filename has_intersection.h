@@ -1,5 +1,4 @@
 #pragma once
-
 template<class T>
 struct Point {
     Point(T x, T y, T z);
@@ -15,6 +14,14 @@ struct Segment{
     Point<double>* left;
     Point<double>* right;
 };
+
+
+//struct Visual : public Visualization
+//{
+//    Visual();
+//    ~Visual();
+//};
+
 
 
 

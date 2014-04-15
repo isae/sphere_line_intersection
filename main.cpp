@@ -5,6 +5,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <has_intersection.h>
 #include <gtest/gtest.h>
+#include <QApplication>
 
 using namespace std;
 using namespace boost::numeric;
@@ -29,9 +30,6 @@ Point<T>::Point(T x, T y, T z){
     this->z = z;
 }
 
-//template<class T>
-//Point<T>::~Point(){}
-
 Segment::Segment(Point<double>* left, Point<double>* right){
     this->left = left;
     this->right = right;
@@ -39,36 +37,15 @@ Segment::Segment(Point<double>* left, Point<double>* right){
 
 Segment::~Segment(){
 }
-//    }
-//template<class T>
-//struct Point {
-//    Point(T x, T y, T z){
-//        this->x = x;
-//        this->y = y;
-//        this->z = z;
-//    }
 
+//Visual::Visual()
+//{
+//    setLineSegments(20);
+//    setSpaceSegments(35);
+//}
 
-//    ~Point(){
-//    }
-
-//    T x;
-//    T y;
-//    T z;
-//};
-
-//struct Segment{
-//    Segment(Point<double>* left, Point<double>* right){
-//        this->left = left;
-//        this->right = right;
-//    }
-
-//    ~Segment(){
-//    }
-
-//    Point<double>* left;
-//    Point<double>* right;
-//};
+//Visual::~Visual(){
+//}
 
 /*in radians*/
 Point<double> get_euclide_coords(double r, double polar_angle, double azimuth){
@@ -97,8 +74,8 @@ turn_t left_turn(double ax, double ay, double az,
     double B = bx*cz - bz*cx;
     double C = bx*cy - by*cx;
 
-    //todo check this, surely wrong
-    double e = (abs(A*ax) + abs(B*ay)+abs(C*az)) * numeric_limits<double>::epsilon() * 4;
+    //magic constant!!
+    double e = (abs(A*ax) + abs(B*ay)+abs(C*az)) * numeric_limits<double>::epsilon() * 18;
 
     double det = A*ax -B*ay+C*az;
 
@@ -141,12 +118,20 @@ bool on_equator(Segment seg1,Segment seg2){
     Point<double> c = *seg2.left;
     Point<double> d = *seg2.right;
 
-    if(left_turn(a.x, a.y, a.z,
-                 b.x, b.y, b.z,
-                 c.x, c.y, c.z)!=collinear ||
-            left_turn(a.x, a.y, a.z,
-                      b.x, b.y, b.z,
-                      d.x, d.y, d.z)!=collinear){
+//    cout<<a.x<<" "<<a.y<<" "<<a.z<<endl;
+//    cout<<b.x<<" "<<b.y<<" "<<b.z<<endl;
+//    cout<<c.x<<" "<<c.y<<" "<<c.z<<endl;
+//    cout<<d.x<<" "<<d.y<<" "<<d.z<<endl;
+
+    turn_t l = left_turn(a.x, a.y, a.z,
+                         b.x, b.y, b.z,
+                         c.x, c.y, c.z);
+    turn_t r = left_turn(a.x, a.y, a.z,
+                         b.x, b.y, b.z,
+                         d.x, d.y, d.z);
+//    cout<<l<<endl;
+//    cout<<r<<endl;
+    if(l!=collinear || r!=collinear){
         return false;
     }
     return true;
@@ -203,6 +188,7 @@ bool is_intersects(Segment seg1,Segment seg2){
     Point<double> d = *seg2.right;
 
     if(on_equator(seg1,seg2)){
+//        cout<<"Hello!!!"<<endl;
         double nx = a.y*b.z - a.z*b.y;
         double ny = a.z*b.x - a.x*b.z;
         double nz = a.x*b.y - a.y*b.x;
@@ -219,8 +205,8 @@ bool is_intersects(Segment seg1,Segment seg2){
                     nx,ny,nz,
                     abx, aby, abz,
                     d.x-a.x,d.y-a.y,d.z-a.z);
-        if(l==r && l==t_left) return false;
-        return true;
+        if(l>=collinear || r>=collinear) return true;
+        return false;
 
     }
 
@@ -247,24 +233,22 @@ bool is_intersects(Segment seg1,Segment seg2){
 
 int main(int argc, char *argv[])
 {
+    //QApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     bool result =  RUN_ALL_TESTS();
+    //Visual myVisual;
+    //myVisual.show();
+//    cout<<"Hello"<<endl;
 
-    cout<<"Hello"<<endl;
 
-    /*
+//    Point<double> p1 = get_euclide_coords(10,m_pi/2,m_pi/6);
+//    Point<double> p2 = get_euclide_coords(10,m_pi/2,m_pi);
+//    Point<double> p3 = get_euclide_coords(10,m_pi/2,m_pi/4);
+//    Point<double> p4 = get_euclide_coords(10,m_pi/2,m_pi/2);
+//    std::cout.setf(std::ios::boolalpha);
+//    Segment seg1 = Segment(&p1,&p2);
+//    Segment seg2 = Segment(&p3,&p4);
+//    cout<<is_intersects(seg1,seg2)<<endl;
 
-    space->addLine(Vector2D(-M_PI / 2, 0), Vector2D(M_PI / 4, 0));
-    space->addLine(Vector2D(-M_PI / 4, 2), Vector2D(M_PI / 4, 2));
-*/
-    Point<double> p1 = get_euclide_coords(10,2,-m_pi/4);
-    Point<double> p2 = get_euclide_coords(10,2,m_pi/4);
-    Point<double> p3 = get_euclide_coords(10,1,0);
-    Point<double> p4 = get_euclide_coords(10,1,m_pi/2);
-    std::cout.setf(std::ios::boolalpha);
-    Segment seg1 = Segment(&p1,&p2);
-    Segment seg2 = Segment(&p3,&p4);
-    cout<<is_intersects(seg1,seg2)<<endl;
-
-    return result;
+    return result;//app.exec();
 }
