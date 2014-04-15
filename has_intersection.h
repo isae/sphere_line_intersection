@@ -1,30 +1,22 @@
-#ifndef HAS_INTERSECTION_H
-#define HAS_INTERSECTION_H
+#pragma once
 
-template<class T> class Point {
-public:
+template<class T>
+struct Point {
+    Point(T x, T y, T z);
+//    ~Point();
     T x;
     T y;
     T z;
 };
 
-template<class T>
-Point<T>::Point(T x, T y, T z);
-Point<T>::~Point();
-
-class Segment{
-
-public:
-  //  Segment(Point<double>* left, Point<double>* right);
+struct Segment{
+    Segment(Point<double> * left,Point<double> * right);
+    ~Segment();
     Point<double>* left;
     Point<double>* right;
-   // ~Segment();
 };
 
-Segment::Segment(Point<double> * left,Point<double> * right);
-Segment::~Segment();
+
 
 bool is_intersects(Segment seg1,Segment seg2);
 Point<double> get_euclide_coords(double r, double polar_angle, double azimuth);
-
-#endif // HAS_INTERSECTION_H

@@ -12,6 +12,7 @@ SOURCES +=
 LIBS += -lgmp
 LIBS += -lgmpxx
 LIBS+= libgtest.a
+LIBS += -lpthread
 
 HEADERS += has_intersection.h
 

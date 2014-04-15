@@ -3,6 +3,8 @@
 #include <gmp.h>
 #include <boost/numeric/interval.hpp>
 #include <boost/math/constants/constants.hpp>
+#include <has_intersection.h>
+#include <gtest/gtest.h>
 
 using namespace std;
 using namespace boost::numeric;
@@ -20,37 +22,53 @@ enum turn_t {
     collinear = 0
 };
 
-template<class T> class Point {
-public:
-    Point(T x, T y, T z){
-        this->x = x;
-        this->y = y;
-        this->z = z;
-    }
+template<class T>
+Point<T>::Point(T x, T y, T z){
+    this->x = x;
+    this->y = y;
+    this->z = z;
+}
+
+//template<class T>
+//Point<T>::~Point(){}
+
+Segment::Segment(Point<double>* left, Point<double>* right){
+    this->left = left;
+    this->right = right;
+}
+
+Segment::~Segment(){
+}
+//    }
+//template<class T>
+//struct Point {
+//    Point(T x, T y, T z){
+//        this->x = x;
+//        this->y = y;
+//        this->z = z;
+//    }
 
 
-    ~Point(){
-    }
+//    ~Point(){
+//    }
 
-    T x;
-    T y;
-    T z;
-};
+//    T x;
+//    T y;
+//    T z;
+//};
 
-class Segment{
+//struct Segment{
+//    Segment(Point<double>* left, Point<double>* right){
+//        this->left = left;
+//        this->right = right;
+//    }
 
-public:
-    Segment(Point<double>* left, Point<double>* right){
-        this->left = left;
-        this->right = right;
-    }
+//    ~Segment(){
+//    }
 
-    ~Segment(){
-    }
-
-    Point<double>* left;
-    Point<double>* right;
-};
+//    Point<double>* left;
+//    Point<double>* right;
+//};
 
 /*in radians*/
 Point<double> get_euclide_coords(double r, double polar_angle, double azimuth){
@@ -201,7 +219,8 @@ bool is_intersects(Segment seg1,Segment seg2){
                     nx,ny,nz,
                     abx, aby, abz,
                     d.x-a.x,d.y-a.y,d.z-a.z);
-        return abs(l+r)<2;
+        if(l==r && l==t_left) return false;
+        return true;
 
     }
 
@@ -216,11 +235,21 @@ bool is_intersects(Segment seg1,Segment seg2){
     turn_t r = left_turn(a.x,a.y,a.z,
                          b.x,b.y,b.z,
                          d.x,d.y,d.z);
-    return abs(l+r)<2;
+    turn_t l2= left_turn(c.x,c.y,c.z,
+                         d.x,d.y,d.z,
+                         a.x,a.y,a.z);
+    turn_t r2 = left_turn(c.x,c.y,c.z,
+                          d.x,d.y,d.z,
+                          b.x,b.y,b.z);
+
+    return abs(l+r)<2&&abs(l2+r2)<2;
 }
 
 int main(int argc, char *argv[])
 {
+    ::testing::InitGoogleTest(&argc, argv);
+    bool result =  RUN_ALL_TESTS();
+
     cout<<"Hello"<<endl;
 
     /*
@@ -237,5 +266,5 @@ int main(int argc, char *argv[])
     Segment seg2 = Segment(&p3,&p4);
     cout<<is_intersects(seg1,seg2)<<endl;
 
-    return 0;
+    return result;
 }
