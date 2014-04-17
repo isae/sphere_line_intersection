@@ -231,7 +231,7 @@ bool is_intersects(Segment seg1,Segment seg2){
     return abs(l+r)<2&&abs(l2+r2)<2;
 }
 
-int main(int argc, char *argv[])
+int main2(int argc, char *argv[])
 {
     //QApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);

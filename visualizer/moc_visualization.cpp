@@ -7,7 +7,7 @@
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
 
-#include "visualization.h"
+#include <visualizer/visualization.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'visualization.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 63

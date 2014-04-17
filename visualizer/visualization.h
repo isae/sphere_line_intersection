@@ -63,11 +63,13 @@ private:
     bool rotating;
     QTimer* timer;
 
-    std::vector<std::tuple<Vector2D, Vector2D, QColor>> lines;
-    std::vector<std::pair<Vector2D, QColor>> points;
-    double radius;
     int line_segments;
     int space_segments;
+
+protected:
+    double radius;
+    std::vector<std::tuple<Vector2D, Vector2D, QColor>> lines;
+    std::vector<std::pair<Vector2D, QColor>> points;
 };
 
 #endif // PROGRAM_H
