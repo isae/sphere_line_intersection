@@ -60,8 +60,8 @@ void MyVisualizer::handleAddingLine(const Vector2D& from, const Vector2D& to)
                 lines[i] = make_tuple(otherFrom, otherTo, QColor::fromRgbF(0,1,0,1));
                 intersect = true;
             }
-            cout<<"Line was added"<<endl;
-            cout<<radius<<endl;
+            //cout<<"Line was added"<<endl;
+//            cout<<radius<<endl;
         } else {thisPosition = i;}
     }
     if(intersect){
