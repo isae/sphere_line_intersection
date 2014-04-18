@@ -22,10 +22,10 @@ void MyVisualizer::handleAddingPoint(const Vector2D& point)
     {
         isLastAdded = true;
         lastAdded = point;
-        cout<<"Point was added"<<endl;
+      //  cout<<"Point was added"<<endl;
     }
     else {
-        cout<<"Second point was added"<<endl;
+      //  cout<<"Second point was added"<<endl;
         addLine(point,lastAdded);
         isLastAdded = false;
     }

@@ -234,8 +234,7 @@ bool is_intersects(Segment seg1,Segment seg2){
 int main2(int argc, char *argv[])
 {
     //QApplication app(argc, argv);
-    ::testing::InitGoogleTest(&argc, argv);
-    bool result =  RUN_ALL_TESTS();
+
     //Visual myVisual;
     //myVisual.show();
 //    cout<<"Hello"<<endl;
@@ -250,5 +249,5 @@ int main2(int argc, char *argv[])
 //    Segment seg2 = Segment(&p3,&p4);
 //    cout<<is_intersects(seg1,seg2)<<endl;
 
-    return result;//app.exec();
+    return 0;//app.exec();
 }
