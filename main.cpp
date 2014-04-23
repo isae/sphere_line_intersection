@@ -74,8 +74,7 @@ turn_t left_turn(double ax, double ay, double az,
     double B = bx*cz - bz*cx;
     double C = bx*cy - by*cx;
 
-    //magic constant!!
-    double e = (abs(A*ax) + abs(B*ay)+abs(C*az)) * numeric_limits<double>::epsilon() * 18;
+    double e = (abs(A*ax) + abs(B*ay)+abs(C*az)) * numeric_limits<double>::epsilon() * 8;
 
     double det = A*ax -B*ay+C*az;
 
