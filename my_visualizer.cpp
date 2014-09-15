@@ -12,8 +12,6 @@ MyVisualizer::MyVisualizer()
 
     addLine(Vector2D(M_PI / 2, M_PI / 6), Vector2D(M_PI / 2, M_PI));
     addLine(Vector2D(M_PI / 2, M_PI / 4), Vector2D(M_PI / 2, M_PI / 2));
-
-
 }
 
 void MyVisualizer::handleAddingPoint(const Vector2D& point)
@@ -54,9 +52,9 @@ void MyVisualizer::handleAddingLine(const Vector2D& from, const Vector2D& to)
             Point<double> bp = Point<double>(b.x,b.y,b.z);
             Point<double> cp = Point<double>(c.x,c.y,c.z);
             Point<double> dp = Point<double>(d.x,d.y,d.z);
-            Segment seg1 = Segment(&ap,&bp);
-            Segment seg2 = Segment(&cp,&dp);
-            if(is_intersects(seg1,seg2)){
+            Segment seg1 = Segment(ap,bp);
+            Segment seg2 = Segment(cp,dp);
+            if(has_intersection(seg1, seg2)){
                 lines[i] = make_tuple(otherFrom, otherTo, QColor::fromRgbF(0,1,0,1));
                 intersect = true;
             }

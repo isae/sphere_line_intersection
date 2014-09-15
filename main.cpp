@@ -1,107 +1,74 @@
-#include <iostream>
+#include <iostream>/*
 #include <gmpxx.h>
 #include <gmp.h>
 #include <boost/numeric/interval.hpp>
-#include <boost/math/constants/constants.hpp>
-#include <has_intersection.h>
+#include <boost/math/constants/constants.hpp>*/
+#include "has_intersection.h"
+#include "common.h"/*
 #include <gtest/gtest.h>
-#include <QApplication>
+#include <QApplication>*/
 
 using namespace std;
-using namespace boost::numeric;
-using namespace interval_lib;
-
-typedef interval<double> I;
-typedef mpq_class R;
-typedef double D;
-
-const double m_pi = boost::math::constants::pi<double>();
-
-enum turn_t {
-    t_left = 1,
-    t_right = -1,
-    collinear = 0
-};
 
 template<class T>
-Point<T>::Point(T x, T y, T z){
+Point<T>::Point(T x, T y, T z) {
     this->x = x;
     this->y = y;
     this->z = z;
 }
 
-Segment::Segment(Point<double>* left, Point<double>* right){
-    this->left = left;
-    this->right = right;
+Segment::~Segment() {
 }
 
-Segment::~Segment(){
-}
-
-//Visual::Visual()
-//{
-//    setLineSegments(20);
-//    setSpaceSegments(35);
-//}
-
-//Visual::~Visual(){
-//}
 
 /*in radians*/
-Point<double> get_euclide_coords(double r, double polar_angle, double azimuth){
+Point<double> get_euclide_coords(double r, double polar_angle, double azimuth) {
     return Point<double>(
-                r*sin(polar_angle)*cos(azimuth),
-                r*sin(polar_angle)*sin(azimuth),
-                r*cos(polar_angle));
+            r * sin(polar_angle) * cos(azimuth),
+            r * sin(polar_angle) * sin(azimuth),
+            r * cos(polar_angle));
 }
 
-I in(D doub){
-    return I(doub);
+template<class T>
+T triple_product(Point<T> a, Point<T> b, Point<T> c) {
+    return a.x * (b.y * c.z - b.z * c.y) - a.y * (b.x * c.z - b.z * c.x) + a.z * (b.x * c.y - b.y * c.x);
 }
 
-R rat(D doub){
-    return R(doub);
-}
+template<class T>
+T newdet(Point<double> a, Point<double> b, Point<double> c) {
+    Point<T> ai = Point<T>(a);
+    Point<T> bi = Point<T>(b);
+    Point<T> ci = Point<T>(c);
 
-template<class T> T triple_product(Point<T> a, Point<T> b, Point<T> c){
-    return a.x*(b.y*c.z - b.z*c.y) - a.y*(b.x*c.z - b.z*c.x) + a.z*(b.x*c.y - b.y*c.x);
-}
+    return triple_product(ai, bi, ci);
+};
 
-turn_t left_turn(double ax, double ay, double az,
-                 double bx, double by, double bz,
-                 double cx, double cy, double cz){
-    double A = by*cz - bz*cy;
-    double B = bx*cz - bz*cx;
-    double C = bx*cy - by*cx;
+template<class T>
+turn_t left_turn(Point<T> const &a, Point<T> const &b, Point<T> const &c) {
+    double A = b.y * c.z - b.z * c.y;
+    double B = b.x * c.z - b.z * c.x;
+    double C = b.x * c.y - b.y * c.x;
 
-    double e = (abs(A*ax) + abs(B*ay)+abs(C*az)) * numeric_limits<double>::epsilon() * 8;
+    double e = (abs(A * a.x) + abs(B * a.y) + abs(C * a.z)) * numeric_limits<double>::epsilon() * 8;
 
-    double det = A*ax -B*ay+C*az;
+    double det = A * a.x - B * a.y + C * a.z;
 
     if (det > e)
         return t_left;
     if (det < -e)
         return t_right;
 
-    Point<I> ai = Point<I>(in(ax),in(ay),in(az));
-    Point<I> bi = Point<I>(in(bx),in(by),in(bz));
-    Point<I> ci = Point<I>(in(cx),in(cy),in(cz));
 
-    I idet = triple_product(ai,bi,ci);
+    I idet = newdet<I>(a, b, c);
 
-    if (!zero_in(idet))
-    {
+    if (!zero_in(idet)) {
         if (idet > 0)
             return t_left;
 
         return t_right;
     }
 
-    Point<R> ar =  Point<R>(rat(ax),rat(ay),rat(az));
-    Point<R> br =  Point<R>(rat(bx),rat(by),rat(bz));
-    Point<R> cr =  Point<R>(rat(cx),rat(cy),rat(cz));
-
-    R rdet = triple_product(ar,br,cr);
+    R rdet = newdet<R>(a, b, c);
 
     if (rdet > 0)
         return t_left;
@@ -111,142 +78,84 @@ turn_t left_turn(double ax, double ay, double az,
     return collinear;
 }
 
-bool on_equator(Segment seg1,Segment seg2){
-    Point<double> a = *seg1.left;
-    Point<double> b = *seg1.right;
-    Point<double> c = *seg2.left;
-    Point<double> d = *seg2.right;
+bool on_equator(Segment seg1, Segment seg2) {
+    Point<double> a = seg1.left;
+    Point<double> b = seg1.right;
+    Point<double> c = seg2.left;
+    Point<double> d = seg2.right;
 
-//    cout<<a.x<<" "<<a.y<<" "<<a.z<<endl;
-//    cout<<b.x<<" "<<b.y<<" "<<b.z<<endl;
-//    cout<<c.x<<" "<<c.y<<" "<<c.z<<endl;
-//    cout<<d.x<<" "<<d.y<<" "<<d.z<<endl;
 
-    turn_t l = left_turn(a.x, a.y, a.z,
-                         b.x, b.y, b.z,
-                         c.x, c.y, c.z);
-    turn_t r = left_turn(a.x, a.y, a.z,
-                         b.x, b.y, b.z,
-                         d.x, d.y, d.z);
-//    cout<<l<<endl;
-//    cout<<r<<endl;
-    if(l!=collinear || r!=collinear){
-        return false;
-    }
-    return true;
+    //  double A = b.y * c.z - b.z * c.y;
+    // double B = b.z * c.x - b.x * c.z;
+    //   double C = b.x * c.y - b.y * c.x;
+    //Ax+By+Cz = 0 - plane equation for b, c, (0,0,0)
+    //  double aSubst = A*a.x+B*a.y+C*a.z;
+    //  double dSubst = A*d.x+B*d.y+C*d.z;
+    return left_turn(a, b, c) == collinear && left_turn(a, b, d) == collinear;
 }
 
-bool in_same_hemisphere(Segment seg1,Segment seg2){
-    Point<double> a = *seg1.left;
-    Point<double> b = *seg1.right;
-    Point<double> c = *seg2.left;
-    Point<double> d = *seg2.right;
-
-    turn_t t1 = left_turn(a.x-d.x,a.y-d.y,a.z-d.z,
-                          b.x-d.x,b.y-d.y,b.z-d.z,
-                          c.x-d.x,c.y-d.y,c.z-d.z);
-    turn_t t2 =left_turn(a.x,a.y,a.z,
-                         b.x,b.y,b.z,
-                         c.x,c.y,c.z);
+bool in_same_hemisphere(Segment seg1, Segment seg2) {
+    Point<double> a = seg1.left;
+    Point<double> b = seg1.right;
+    Point<double> c = seg2.left;
+    Point<double> d = seg2.right;
+    //lets check that left turn of zero and fourth vertex of tetraedr relatively to each edge are equal
+    turn_t t1 = left_turn(a - d, b - d, c - d);
+    turn_t t2 = left_turn(a, b, c);
 
 
-    turn_t  t3 = left_turn(d.x-a.x,d.y-a.y,d.z-a.z,
-                           b.x-a.x,b.y-a.y,b.z-a.z,
-                           c.x-a.x,c.y-a.y,c.z-a.z);
-    turn_t  t4 = left_turn(d.x,d.y,d.z,
-                           b.x,b.y,b.z,
-                           c.x,c.y,c.z);
+    turn_t t3 = left_turn(d - a, b - a, c - a);
+    turn_t t4 = left_turn(d, b, c);
 
 
-    turn_t  t5=left_turn(a.x-b.x,a.y-b.y,a.z-b.z,
-                         d.x-b.x,d.y-b.y,d.z-b.z,
-                         c.x-b.x,c.y-b.y,c.z-b.z);
-    turn_t  t6=left_turn(a.x,a.y,a.z,
-                         d.x,d.y,d.z,
-                         c.x,c.y,c.z);
+    turn_t t5 = left_turn(a - b, d - b, c - b);
+    turn_t t6 = left_turn(a, d, c);
 
 
+    turn_t t7 = left_turn(a - c, b - c, d - c);
+    turn_t t8 = left_turn(a, b, d);
 
-    turn_t  t7 = left_turn(a.x-c.x,a.y-c.y,a.z-c.z,
-                           b.x-c.x,b.y-c.y,b.z-c.z,
-                           d.x-c.x,d.y-c.y,d.z-c.z);
-    turn_t  t8 =  left_turn(a.x,a.y,a.z,
-                            b.x,b.y,b.z,
-                            d.x,d.y,d.z);
-
-    if(t1!=t2||t3!=t4||t5!=t6||t7!=t8){
+    if (t1 != t2 || t3 != t4 || t5 != t6 || t7 != t8) {
         return true;
     }
     return false;
 }
+
 /*checks if [a,b] intersects [c,d] on the sphere*/
-bool is_intersects(Segment seg1,Segment seg2){
-    Point<double> a = *seg1.left;
-    Point<double> b = *seg1.right;
-    Point<double> c = *seg2.left;
-    Point<double> d = *seg2.right;
+bool has_intersection(Segment seg1, Segment seg2) {
+    Point<double> a = seg1.left;
+    Point<double> b = seg1.right;
+    Point<double> c = seg2.left;
+    Point<double> d = seg2.right;
 
-    if(on_equator(seg1,seg2)){
+    if (on_equator(seg1, seg2)) {
 //        cout<<"Hello!!!"<<endl;
-        double nx = a.y*b.z - a.z*b.y;
-        double ny = a.z*b.x - a.x*b.z;
-        double nz = a.x*b.y - a.y*b.x;
+        Point<double> n = Point<double>(
+                a.y * b.z - a.z * b.y,
+                a.z * b.x - a.x * b.z,
+                a.x * b.y - a.y * b.x);
 
-        double abx = a.x-b.x;
-        double aby = a.y-b.y;
-        double abz = a.z-b.z;
+        Point<double> ab = Point<double>(a.x - b.x, a.y - b.y, a.z - b.z);
+        Point<double> ca = Point<double>(c.x - a.x, c.y - a.y, c.z - a.z);
+        Point<double> da = Point<double>(d.x - a.x, d.y - a.y, d.z - a.z);
 
 
-        turn_t l = left_turn(nx,ny,nz,
-                             abx, aby, abz,
-                             c.x-a.x,c.y-a.y,c.z-a.z);
-        turn_t r = left_turn(
-                    nx,ny,nz,
-                    abx, aby, abz,
-                    d.x-a.x,d.y-a.y,d.z-a.z);
-        if(l>=collinear || r>=collinear) return true;
+        turn_t l = left_turn(n, ab, ca);
+        turn_t r = left_turn(n, ab, da);
+        if (l >= collinear || r >= collinear) return true;
         return false;
 
     }
 
-    if(!in_same_hemisphere(seg1,seg2)){
+    if (!in_same_hemisphere(seg1, seg2)) {
         return false;
     }
 
 
-    turn_t l= left_turn(a.x,a.y,a.z,
-                        b.x,b.y,b.z,
-                        c.x,c.y,c.z);
-    turn_t r = left_turn(a.x,a.y,a.z,
-                         b.x,b.y,b.z,
-                         d.x,d.y,d.z);
-    turn_t l2= left_turn(c.x,c.y,c.z,
-                         d.x,d.y,d.z,
-                         a.x,a.y,a.z);
-    turn_t r2 = left_turn(c.x,c.y,c.z,
-                          d.x,d.y,d.z,
-                          b.x,b.y,b.z);
+    turn_t l = left_turn(a, b, c);
+    turn_t r = left_turn(a, b, d);
+    turn_t l2 = left_turn(c, d, a);
+    turn_t r2 = left_turn(c, d, b);
 
-    return abs(l+r)<2&&abs(l2+r2)<2;
-}
-
-int main2(int argc, char *argv[])
-{
-    //QApplication app(argc, argv);
-
-    //Visual myVisual;
-    //myVisual.show();
-//    cout<<"Hello"<<endl;
-
-
-//    Point<double> p1 = get_euclide_coords(10,m_pi/2,m_pi/6);
-//    Point<double> p2 = get_euclide_coords(10,m_pi/2,m_pi);
-//    Point<double> p3 = get_euclide_coords(10,m_pi/2,m_pi/4);
-//    Point<double> p4 = get_euclide_coords(10,m_pi/2,m_pi/2);
-//    std::cout.setf(std::ios::boolalpha);
-//    Segment seg1 = Segment(&p1,&p2);
-//    Segment seg2 = Segment(&p3,&p4);
-//    cout<<is_intersects(seg1,seg2)<<endl;
-
-    return 0;//app.exec();
+    return abs(l + r) < 2 && abs(l2 + r2) < 2;
 }
