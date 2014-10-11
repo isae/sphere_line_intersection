@@ -1,0 +1,2 @@
+/usr/bin/ar cr libintersection_logic.a  CMakeFiles/intersection_logic.dir/has_intersection.cpp.o
+/usr/bin/ranlib libintersection_logic.a

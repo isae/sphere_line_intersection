@@ -1,0 +1,5 @@
+/home/xottab/cg-course/sphere_intersections/build/3rdParty/visualizer/CMakeFiles/Geometry2.dir
+/home/xottab/cg-course/sphere_intersections/build/3rdParty/visualizer/CMakeFiles/Geometry2_automoc.dir
+/home/xottab/cg-course/sphere_intersections/build/include/CMakeFiles/intersection_logic.dir
+/home/xottab/cg-course/sphere_intersections/build/visualisation/CMakeFiles/v_h.dir
+/home/xottab/cg-course/sphere_intersections/build/visualisation/CMakeFiles/visualization.dir

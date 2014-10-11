@@ -1,0 +1,25 @@
+# Try to find the GMP librairies
+2	#  GMP_FOUND - system has GMP lib
+3	#  GMP_INCLUDE_DIR - the GMP include directory
+4	#  GMP_LIBRARIES - Libraries needed to use GMP
+5	
+6	# Copyright (c) 2006, Laurent Montel, <montel@kde.org>
+7	#
+8	# Redistribution and use is allowed according to the terms of the BSD license.
+9	# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+10	
+11	if (GMP_INCLUDE_DIR AND GMP_LIBRARIES)
+12	  # Already in cache, be silent
+13	  set(GMP_FIND_QUIETLY TRUE)
+14	endif (GMP_INCLUDE_DIR AND GMP_LIBRARIES)
+15	
+16	find_path(GMP_INCLUDE_DIR NAMES gmp.h )
+17	find_library(GMP_LIBRARIES NAMES gmp libgmp )
+18	find_library(GMPXX_LIBRARIES NAMES gmpxx libgmpxx )
+19	MESSAGE(STATUS "GMP libs: " ${GMP_LIBRARIES} " " ${GMPXX_LIBRARIES} )
+20	
+21	include(FindPackageHandleStandardArgs)
+22	FIND_PACKAGE_HANDLE_STANDARD_ARGS(GMP DEFAULT_MSG GMP_INCLUDE_DIR GMP_LIBRARIES)
+23	
+24	mark_as_advanced(GMP_INCLUDE_DIR GMP_LIBRARIES)
+

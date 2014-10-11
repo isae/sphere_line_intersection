@@ -1,0 +1,2 @@
+/usr/bin/ar cr libGeometry2.a  CMakeFiles/Geometry2.dir/sources/main.cpp.o CMakeFiles/Geometry2.dir/sources/visualization.cpp.o CMakeFiles/Geometry2.dir/sources/exampleclass.cpp.o CMakeFiles/Geometry2.dir/sources/vector2d.cpp.o CMakeFiles/Geometry2.dir/sources/vector3d.cpp.o CMakeFiles/Geometry2.dir/sources/axisview.cpp.o CMakeFiles/Geometry2.dir/sources/view.cpp.o CMakeFiles/Geometry2.dir/sources/random.cpp.o CMakeFiles/Geometry2.dir/Geometry2_automoc.cpp.o
+/usr/bin/ranlib libGeometry2.a
